@@ -1,27 +1,24 @@
 Data directory:
 + `original`: raw data
-+ `rewrite_first_pronoun`: replaced "I, we, us, me" with "speaker x".
-+ `remove_stopwords`: remove stopwords.
++ `rewrite_first_pronoun`: The datasets processed by neuralcoref with customized heuristic rules.
++ `remove_stopwords`: The datasets processed by neuralcoref with customized heuristic rules as well as removed stopwords.
++ `naive_pronoun_resolution`: The datasets processed by neuralcoref without any heuristic rules.
 
-## 1. rewrite first pronoun
+## 1. rewrite_first_pronoun
 
 refer to `utils.py`.
 
-We created a blacklist for pronoun replacement in
-`
-def get_mention2main_dict(doc, black_list=["me","us","we","i"])
-`.
+We created a blacklist for pronoun replacement to avoid replacing the first person pronouns - ["we","us","I","me"].
 
+Apart from the black list implemented, we also modify the pronouns "I" and "me" as the speaker himself/herself.
 
-The detailed rules are:
-```
-if token.lower() in ["me","i"]:
-            new_sentence += speaker + " " 
-         elif token.lower() == "my":
-            new_sentence += speaker+"'s" + " "
-         elif token.lower() == "i'm":
-            new_sentence += speaker+" "+"is" + " " 
-         elif token.lower() == "am":
-            new_sentence += "is" + " "
-```
-## 2. remove stopwords
+For example:
+Speaker 1: "Yes, Ross is me". -> Speaker 1: "Yes, Ross is speaker 1."
+
+## 2. remove_stopwords
+
+On top of the rewrite_first_pronoun dataset, we removed the stopwords in the dataset to study the affect of stopwords regarding model performance.
+
+## 3. naive_pronoun_resolution
+
+To study the effect of our heuristic rules proposed, we also build up a dataset which is purely processed by neuralcoref
