@@ -1,10 +1,12 @@
 from audioop import reverse
 from dataclasses import replace
+from matplotlib.pyplot import text
 import spacy
 import neuralcoref
 import json
 from tqdm import tqdm
 import re
+from unidecode import unidecode
 
 
 def concatenate_sentences(text):
@@ -71,21 +73,25 @@ def replace_pronoun_with_speaker(sentences):
         # Some rules to replace the pronoun and "be" verb
         while i < len(naive_tokens):
             token = naive_tokens[i]
-            token = re.sub("(me|Me|I)(?=\W+)", speaker, token)
+            token = re.sub("^(me|Me|I)(?=\W+$)", speaker, token)
             if token.lower() in ["me", "i"]:
                 new_sentence += speaker + " "
             elif token.lower() == "my":
                 new_sentence += speaker + "'s" + " "
             elif token.lower() == "i'm":
                 new_sentence += speaker + " " + "is" + " "
+            elif token.lower() == "i'll":
+                new_sentence += speaker + " " + "will" + " "
+            elif token.lower() == "i'd":
+                new_sentence += speaker + " " + "would" + " "
             elif token.lower() == "am":
                 new_sentence += "is" + " "
             else:
                 new_sentence += token + " "
             i += 1
         new_sentence = new_sentence[:-1]  # Drop the last space
-        new_sentence = new_sentence.replace(u"\u2018", "'").replace(u"\u2019",
-                                                                    "'")  # Address the issue of symbol encoding
+
+        # new_sentence = new_sentence.replace(u"\u2018", "'").replace(u"\u2019", "'") # Address the issue of symbol encoding
         sentences_new.append(new_sentence)
         # print(new_sentence)
     return sentences_new
@@ -101,13 +107,30 @@ def pipeline(sentences, black_list, replace_pronoun=False):
     return sentences
 
 
+# avoid utf-8 encoding issue
+def encode_label(label):
+    for i in range(len(label)):
+        for key in label[i]:
+            if isinstance(label[i][key], str):
+                label[i][key] = unidecode(label[i][key])
+            elif isinstance(label[i][key], int):
+                continue
+            else:
+                for j in range(len(label[i][key])):
+                    if isinstance(label[i][key][j], str):
+                        label[i][key][j] = unidecode(label[i][key][j])
+                    elif isinstance(label[i][key][j], int):
+                        continue
+    return label
+
+
 def process_data(data, black_list=["me", "us", "we", "i"], replace_pronoun=False):
     processed_data = []
 
     for sample in tqdm(data):
         sample_processed = []
-        sample_text = sample[0]
-        sample_label = sample[1]
+        sample_text = [unidecode(sentence) for sentence in sample[0]]
+        sample_label = encode_label(sample[1])
         sample_text_processed = pipeline(sample_text, black_list, replace_pronoun)
         sample_processed.append(sample_text_processed)
         sample_processed.append(sample_label)
