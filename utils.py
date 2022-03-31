@@ -1,18 +1,19 @@
 from audioop import reverse
 from dataclasses import replace
+
 from matplotlib.pyplot import text
 import spacy
 import neuralcoref
 import json
 from tqdm import tqdm
 import re
-from unidecode import unidecode
+from unidecode import unidecode  # $ pip install unidecode
 
 
 def concatenate_sentences(text):
     text_concated = ""
     for sentence in text:
-        text_concated += sentence + "\n"
+        text_concated += sentence + " "
     return text_concated
 
 
@@ -45,7 +46,6 @@ def replace_pronouns(text, mention2main, debug=False):
         start = mention.start_char
         end = mention.end_char
         main_text = main.text
-
         if debug:
             print("text to be replaced: ", text[start:end])
             print("mention: ", mention)
@@ -57,8 +57,10 @@ def replace_pronouns(text, mention2main, debug=False):
 
 
 def split_doc(doc):
-    sentences = doc.split("\n")
-    sentences = sentences[:-1]  # Remove the space
+    sentences = re.sub("(Speaker \d):", r"\n\1:", doc).split("\n")
+    sentences = sentences[1:]
+    for i in range(len(sentences)):
+        sentences[i] = sentences[i][:-1]
     return sentences
 
 
@@ -89,7 +91,7 @@ def replace_pronoun_with_speaker(sentences):
             else:
                 new_sentence += token + " "
             i += 1
-        new_sentence = new_sentence[:-1]  # Drop the last space
+        new_sentence = new_sentence[:-1]  # Drop the last spaces
 
         # new_sentence = new_sentence.replace(u"\u2018", "'").replace(u"\u2019", "'") # Address the issue of symbol encoding
         sentences_new.append(new_sentence)
@@ -104,10 +106,11 @@ def pipeline(sentences, black_list, replace_pronoun=False):
     mention2main = get_mention2main_dict(doc, black_list=black_list)
     doc_processed = replace_pronouns(doc, mention2main, debug=False)
     sentences = split_doc(doc_processed)
+
     return sentences
 
 
-# avoid utf-8 encoding issue
+# avodi utf-8 encoding issue
 def encode_label(label):
     for i in range(len(label)):
         for key in label[i]:
@@ -130,6 +133,7 @@ def process_data(data, black_list=["me", "us", "we", "i"], replace_pronoun=False
     for sample in tqdm(data):
         sample_processed = []
         sample_text = [unidecode(sentence) for sentence in sample[0]]
+        # sample_text = unidecode(sample[0])
         sample_label = encode_label(sample[1])
         sample_text_processed = pipeline(sample_text, black_list, replace_pronoun)
         sample_processed.append(sample_text_processed)
