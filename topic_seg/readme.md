@@ -1,3 +1,7 @@
+# Set up baseline, with Bert Tiny 
+
+The baseline can be set up in Google drive using `CS4248/baseline/TUCORE_GCN.ipynb`, in which it will download the original TUCORE_GCN model, the dataset and the Bert tiny model. 
+
 # Data proprocessing
 
 run `data_preprocessing.ipynb`. 
@@ -9,9 +13,7 @@ Input directory is at line 56, variable `path_input_docs`.
 The source data used `CS4248/data/original/[train, dev, test].json` from this repo.
 Output directory is at line 127, `dump_data` params. Our result was saved to `CS4248/topic_seg/topic_data/[train, dev, test].json` in this repo. 
 
-# Set up baseline, with Bert Tiny 
-
-The baseline can be set up in Google drive using `CS4248/baseline/TUCORE_GCN.ipynb`, in which it will download the original TUCORE_GCN model, the dataset and the Bert tiny model. 
+On google drive, drag `CS4248/topic_seg/topic_data` folder as `TUCORE_GCN_BASE_DIR/datasets/DialogRE/topic` folder.
 
 # Run experiment using origianl model 
 
@@ -25,7 +27,7 @@ Firstly go to `CS4248/topic_seg/original_codes`. Assume the TUCORE_GCN model on 
 
 + Drag `models\BERT\TUCOREGCN_BERT_original.py` into `TUCORE_GCN\models\BERT` so that it is in the same directory as `TUCOREGCN_BERT.py`.
 
-We can run the training and evaluation using the following commands.
+We can run the training and evaluation using the following commands. On google drive, the results will be saved to `TUCORE-GCN/TUCOREGCN_BERT_DialogRE_original` folder.
 
 ```
 # Train
@@ -65,7 +67,7 @@ Firstly go to `CS4248/topic_seg/topic_codes`. Assume the TUCORE_GCN model on Goo
 
 + Drag `models\BERT\TUCOREGCN_BERT_embedding.py` into `TUCORE_GCN\models\BERT` so that it is in the same directory as `TUCOREGCN_BERT.py`.
 
-We can run the training and evaluation using the following commands.
+We can run the training and evaluation using the following commands. On google drive, the results will be saved to `TUCORE-GCN/TUCOREGCN_BERT_DialogRE_topic` folder.
 
 ```
 # Train
