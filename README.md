@@ -16,9 +16,9 @@ For the usage and introduction of each component, please refer to the introducti
 ### Reproducibility
 To reproduce our training process in main experiments, 
 - download [RoBERTa](https://github.com/pytorch/fairseq/tree/main/examples/roberta) and unzip it to ```HAN/pre-trained_model/RoBERTa/```.
-- download ```merges.txt``` and ```vocab.json``` from [here](https://huggingface.co/roberta-large/tree/main). 
+- download ```merges.txt``` and ```vocab.json``` from [here](https://huggingface.co/roberta-large/tree/main), put them to ```HAN/pre-trained_model/RoBERTa/```
 - run following command under ```HAN```
-  - ```export RoBERTa_LARGE_DIR=/path/to/HAN/pre-trained_model/RoBERTa```
+  - ```export RoBERTa_LARGE_DIR=/PATH/TO/HAN/pre-trained_model/RoBERTa```
   - ```nohup python run_classifier.py --do_train --do_eval --encoder_type RoBERTa  --data_dir ../data/original --data_name DialogRE  --vocab_file $RoBERTa_LARGE_DIR/vocab.json --merges_file $RoBERTa_LARGE_DIR/merges.txt  --config_file $RoBERTa_LARGE_DIR/config.json   --init_checkpoint $RoBERTa_LARGE_DIR/pytorch_model.bin   --max_seq_length 512   --train_batch_size 10   --learning_rate 7.5e-6   --num_train_epochs 30   --output_dir HAN --gradient_accumulation_steps 2 > train.log 2>&1 &```
 
 To evaluate our results, run following command under ```HAN```
